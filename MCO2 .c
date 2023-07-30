@@ -140,7 +140,7 @@ void printGraph(Node* adjacencyList[], int numNodes) {
         printf("\n");
     }
 }
-
+// BFS is Breadth First Search or simply level order search
 int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVertex) 
 {
     // Create an array 'visited' to keep track of visited nodes.
