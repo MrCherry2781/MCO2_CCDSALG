@@ -36,45 +36,32 @@ void readFile(int *num_accounts, int *num_friendships, int friendships[1750000][
     fclose(fp);
 }
 
-void findFriends(int data[][2], int connections, int ID, int *num_friends, int FriendList[])
+/*
+	This fuction locates the creates a matrix of the ID numbers assigning 1 if friends and 0 if not.
+*/
+void dataMatrix(int data[][2], int accounts, int connections, int matrix[][accounts])
 {
-	int i = 0;
-	int j = 0;
-	int index1 = -1;
-	int index2 = 0;
+	int i, j;
 	
-	for(i = 0; i < connections; i++)
+	for(i=0; i < accounts; i++)							// Create matrix full of 0.
 	{
-		
-		if(ID == data[i][1])
+		for(j = 0; j < accounts; j++)
 		{
-			index1 = i;
-			i = connections + 1;
-		}	
+			matrix[i][j] = 0;	
+		}
 	}
-
-    for(i = index1; i < connections+1; i++)
-    {
-        if(ID != data[i][1])
-        {
-            index2 = i;
-            i = connections;
-        }	
-    }
-    
-    *num_friends = index2 - index1;
-    
-    for(i = index1; i < index2; i++)
-    {
-        FriendList[j] = data[i][0];
-        j++;
-    }	
+	
+	for(i=0; i < connections; i++)							// Assigning friendships with 1.
+	{
+		matrix[data[i][1]][data[i][0]] = 1;
+	}
+	
 }
 
 /*
-	Function for printing the friends from an inputted ID number.
+	Function for printing the friends from an inputed ID number.
 */
-void displayFriends(int data[][2], int accounts, int connections)
+void displayFriends(int accounts, int connections, int matrix[][accounts])
 {
 	int ID;
 	int i = 0;
@@ -82,11 +69,11 @@ void displayFriends(int data[][2], int accounts, int connections)
 	int num_friends;
 	int new_line = 1;
 	static int FriendList[1750000];
-
-    // This loop asks the input for a ID number, if invalid then loop, else continue.
-	do 																		
+	
+	
+	do 											// This loop asks the input for a ID number, if invalid then loop, else continue.
 	{
-		printf("Input ID number [from 0 to %d]: ", accounts-1);
+		printf("\nInput ID number [from 0 to %d]: ", accounts-1);
 		scanf("%d", &ID);
 		
 		if(ID < 0 || ID > accounts-1)
@@ -99,23 +86,28 @@ void displayFriends(int data[][2], int accounts, int connections)
 		}
 	}while(valid == 1);
 	
-	// Calling the function to find friends of input.
-	findFriends(data, connections, ID, &num_friends, FriendList);
-
-	// Prints the array of friends.
-	printf("\nPerson %d has %d friends!\n", ID, num_friends); 				
-	printf("List of friends:\n\n");
+	for(i = 0; i < accounts; i++)							// Finding the friend ID and storing the IDs with 1s into a Array.
+	{
+		if(matrix[ID][i] == 1)
+		{
+			FriendList[num_friends] = i;
+			num_friends++;
+		}
+	}
+	
+	printf("\nPerson %d has %d friends!\n", ID, num_friends); 				// Prints the array of friends.
+	printf("List of friends:\n");
 	for(i = 0; i < num_friends; i++)
 	{
 		printf("%5d ", FriendList[i]);
-		if(new_line == 10) 													// If statement to print a new line so that only 10 friends will be displayed per line.
+		if(new_line == 10) 								// If statement to print a new line so that only 10 friends will be displayed per line.
 		{
 			printf("\n");
 			new_line = 0;
 		}
 		new_line++;
 	}
-    printf("\n");
+	printf("\n");
 }
 
 // Function to create a new node
@@ -256,14 +248,17 @@ int main() {
     int num_friendships = 0;
     static int friendships[1750000][2];
     char filePath[50];
-
+    
     // Ask for file path
     printf("Enter Path of File to Load: ");
     scanf(" %[^\n]", filePath);
     backSlashToForwardSlash(filePath);
 
     readFile(&num_accounts, &num_friendships, friendships, filePath);
-
+    
+	int (*matrix)[num_accounts] = malloc(sizeof *matrix * num_accounts);
+	dataMatrix(friendships, num_accounts, num_friendships, matrix);
+	
     Node* adjacencyList[MAX_NODES+1] = { NULL };
 
     for (int i = 0; i < num_friendships; i++) {
@@ -285,7 +280,7 @@ int main() {
 
         switch (choice) {
         case 1:
-            displayFriends(friendships,num_accounts,num_friendships);
+            displayFriends(num_accounts,num_friendships,matrix);
             break;
         case 2:
             connections(adjacencyList,num_friendships,num_accounts);
