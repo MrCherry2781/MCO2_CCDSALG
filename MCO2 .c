@@ -86,8 +86,6 @@ void displayFriends(int accounts, int connections, int matrix[][accounts])
 		}
 	}while(valid == 1);
 	
-	//num_friends = dataMatrix(data, accounts, connections, ID, FriendList);
-	
 	for(i = 0; i < accounts; i++)							// Finding the friend ID and storing the IDs with 1s into a Array.
 	{
 		if(matrix[ID][i] == 1)
