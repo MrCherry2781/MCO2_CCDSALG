@@ -38,13 +38,10 @@ void readFile(int *num_accounts, int *num_friendships, int friendships[1750000][
 
 /*
 	This fuction locates the creates a matrix of the ID numbers assigning 1 if friends and 0 if not.
-	Then it locates the friends of the inputed ID number from the matrix and stores it into a new array called FriendList.
 */
-int dataMatrix(int data[][2], int accounts, int connections, int ID, int FriendList[])
+void dataMatrix(int data[][2], int accounts, int connections, int matrix[][accounts])
 {
-	int (*matrix)[accounts] = malloc(sizeof *matrix * accounts);
 	int i, j;
-	int ctr = 0;
 	
 	for(i=0; i < accounts; i++)							// Create matrix full of 0.
 	{
@@ -59,22 +56,12 @@ int dataMatrix(int data[][2], int accounts, int connections, int ID, int FriendL
 		matrix[data[i][1]][data[i][0]] = 1;
 	}
 	
-	for(i = 0; i < accounts; i++)							// Finding the friend ID and storing the IDs with 1s into a Array.
-	{
-		if(matrix[ID][i] == 1)
-		{
-			FriendList[ctr] = i;
-			ctr++;
-		}
-	}
-		
-	return ctr;									// Ctr is the number of friends.
 }
 
 /*
 	Function for printing the friends from an inputed ID number.
 */
-void displayFriends(int data[][2], int accounts, int connections)
+void displayFriends(int accounts, int connections, int matrix[][accounts])
 {
 	int ID;
 	int i = 0;
@@ -99,7 +86,16 @@ void displayFriends(int data[][2], int accounts, int connections)
 		}
 	}while(valid == 1);
 	
-	num_friends = dataMatrix(data, accounts, connections, ID, FriendList);
+	//num_friends = dataMatrix(data, accounts, connections, ID, FriendList);
+	
+	for(i = 0; i < accounts; i++)							// Finding the friend ID and storing the IDs with 1s into a Array.
+	{
+		if(matrix[ID][i] == 1)
+		{
+			FriendList[num_friends] = i;
+			num_friends++;
+		}
+	}
 	
 	printf("\nPerson %d has %d friends!\n", ID, num_friends); 				// Prints the array of friends.
 	printf("List of friends:\n");
@@ -246,14 +242,17 @@ int main() {
     int num_friendships = 0;
     static int friendships[1750000][2];
     char filePath[50];
-
+    
     // Ask for file path
     printf("Enter Path of File to Load: ");
     scanf(" %[^\n]", filePath);
     backSlashToForwardSlash(filePath);
 
     readFile(&num_accounts, &num_friendships, friendships, filePath);
-
+    
+	int (*matrix)[num_accounts] = malloc(sizeof *matrix * num_accounts);
+	dataMatrix(friendships, num_accounts, num_friendships, matrix);
+	
     Node* adjacencyList[MAX_NODES+1] = { NULL };
 
     for (int i = 0; i < num_friendships; i++) {
@@ -275,7 +274,7 @@ int main() {
 
         switch (choice) {
         case 1:
-            displayFriends(friendships,num_accounts,num_friendships);
+            displayFriends(num_accounts,num_friendships,matrix);
             break;
         case 2:
             connections(adjacencyList,num_friendships,num_accounts);
