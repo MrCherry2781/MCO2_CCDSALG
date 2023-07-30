@@ -201,14 +201,29 @@ int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVe
     return shortestPath;
 }
 
-void connections(Node* adjacencyList[],int num_friendships){
+void connections(Node* adjacencyList[],int num_friendships,int num_friend){
 	// Get input from the user
     int a, b;
-    printf("\nEnter ID number first ID: ");
-    scanf("%d", &a);
-    printf("Enter ID number second ID: ");
-    scanf("%d", &b);
+    do
+    {
+        printf("\nEnter ID number first ID: ");
+        scanf("%d", &a);
+        if (a<0 ||a>num_friend)
+        {
+            printf("\nEnter a valid ID!");
+        }
+        
 
+    } while (a<0 ||a>num_friend);
+    do
+    {
+        printf("\nEnter ID number second ID: ");
+        scanf("%d", &b);
+        if(b<0 || b>num_friend)
+        {
+            printf("\nEnter a valid ID!");
+        }
+    } while(b<0 || b>num_friend);
     int numNodes = MAX_NODES; // Assuming 'num_accounts' represents the number of nodes
     int* shortestPath = BFS(adjacencyList, numNodes, a, b);
 
@@ -260,7 +275,7 @@ int main() {
             displayFriends(friendships,num_accounts,num_friendships);
             break;
         case 2:
-            connections(adjacencyList,num_friendships);
+            connections(adjacencyList,num_friendships,num_accounts);
             break;
         case 3:
             system("cls");
