@@ -149,13 +149,17 @@ void printGraph(Node* adjacencyList[], int numNodes) {
     }
 }
 
-int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVertex) {
+int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVertex) 
+{
+    // Create an array 'visited' to keep track of visited nodes.
     int* visited = (int*)malloc(numNodes * sizeof(int));
     for (int i = 0; i <= numNodes; ++i)
         visited[i] = 0;
 
     // Create a queue for BFS
     int* queue = (int*)malloc(numNodes * sizeof(int));
+    visited[startVertex] = 1;
+
     int front = 0, rear = 0;
 
     // Parent array to store the path
@@ -163,17 +167,20 @@ int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVe
     for (int i = 0; i <= numNodes; ++i)
         parent[i] = -1;
 
-    visited[startVertex] = 1;
+     //Enqueue the 'startVertex' into the queue to begin BFS.
     queue[rear++] = startVertex;
 
+    // Continue BFS until the queue is empty or destination is found.
     while (front < rear) {
         int currentVertex = queue[front++];
         if (currentVertex == destinationVertex)
             break;
 
+        // Explore the neighbors of the currentVertex.
         Node* temp = adjacencyList[currentVertex];
         while (temp != NULL) {
             int adjVertex = temp->data;
+            // If the neighbor is unvisited, mark it as visited, set its parent, and enqueue it.
             if (!visited[adjVertex]) {
                 visited[adjVertex] = 1;
                 parent[adjVertex] = currentVertex;
@@ -192,6 +199,7 @@ int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVe
         currentNode = parent[currentNode];
     }
 
+    // Free the dynamically allocated memory for visited, queue, and parent arrays.
     free(visited);
     free(queue);
     free(parent);
