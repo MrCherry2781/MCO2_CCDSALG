@@ -86,7 +86,7 @@ void displayFriends(int data[][2], int accounts, int connections)
 	
 	do 											// This loop asks the input for a ID number, if invalid then loop, else continue.
 	{
-		printf("Input ID number [from 0 to %d]: ", accounts-1);
+		printf("\nInput ID number [from 0 to %d]: ", accounts-1);
 		scanf("%d", &ID);
 		
 		if(ID < 0 || ID > accounts-1)
@@ -113,6 +113,7 @@ void displayFriends(int data[][2], int accounts, int connections)
 		}
 		new_line++;
 	}
+	printf("\n");
 }
 
 // Function to create a new node
