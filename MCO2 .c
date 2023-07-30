@@ -130,10 +130,15 @@ void addEdge(Node* adjacencyList[], int src, int dest) {
     Node* newNode = createNode(dest);
     newNode->next = adjacencyList[src];
     adjacencyList[src] = newNode;
+
+    newNode = createNode(src);
+    newNode->next = adjacencyList[dest];
+    adjacencyList[dest] = newNode;
+
 }
 
 void printGraph(Node* adjacencyList[], int numNodes) {
-    for (int i = 1; i <= numNodes; i++) {
+    for (int i = 0; i <= numNodes; i++) {
         printf("Node %d is connected to:", i);
         Node* current = adjacencyList[i];
         while (current) {
@@ -146,7 +151,7 @@ void printGraph(Node* adjacencyList[], int numNodes) {
 
 int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVertex) {
     int* visited = (int*)malloc(numNodes * sizeof(int));
-    for (int i = 1; i <= numNodes; ++i)
+    for (int i = 0; i <= numNodes; ++i)
         visited[i] = 0;
 
     // Create a queue for BFS
@@ -155,7 +160,7 @@ int* BFS(Node* adjacencyList[], int numNodes, int startVertex, int destinationVe
 
     // Parent array to store the path
     int* parent = (int*)malloc(numNodes * sizeof(int));
-    for (int i = 1; i <= numNodes; ++i)
+    for (int i = 0; i <= numNodes; ++i)
         parent[i] = -1;
 
     visited[startVertex] = 1;
@@ -251,7 +256,7 @@ int main() {
 
     readFile(&num_accounts, &num_friendships, friendships, filePath);
 
-    Node* adjacencyList[MAX_NODES] = { NULL };
+    Node* adjacencyList[MAX_NODES+1] = { NULL };
 
     for (int i = 0; i < num_friendships; i++) {
         int src = friendships[i][0];
