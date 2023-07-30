@@ -36,43 +36,43 @@ void readFile(int *num_accounts, int *num_friendships, int friendships[1750000][
     fclose(fp);
 }
 
-void findFriends(int data[][2], int connections, int ID, int *num_friends, int FriendList[])
+/*
+	This fuction locates the creates a matrix of the ID numbers assigning 1 if friends and 0 if not.
+	Then it locates the friends of the inputed ID number from the matrix and stores it into a new array called FriendList.
+*/
+int dataMatrix(int data[][2], int accounts, int connections, int ID, int FriendList[])
 {
-	int i = 0;
-	int j = 0;
-	int index1 = -1;
-	int index2 = 0;
+	int (*matrix)[accounts] = malloc(sizeof *matrix * accounts);
+	int i, j;
+	int ctr = 0;
 	
-	for(i = 0; i < connections; i++)
+	for(i=0; i < accounts; i++)							// Create matrix full of 0.
 	{
-		
-		if(ID == data[i][1])
+		for(j = 0; j < accounts; j++)
 		{
-			index1 = i;
-			i = connections + 1;
-		}	
+			matrix[i][j] = 0;	
+		}
 	}
-
-    for(i = index1; i < connections+1; i++)
-    {
-        if(ID != data[i][1])
-        {
-            index2 = i;
-            i = connections;
-        }	
-    }
-    
-    *num_friends = index2 - index1;
-    
-    for(i = index1; i < index2; i++)
-    {
-        FriendList[j] = data[i][0];
-        j++;
-    }	
+	
+	for(i=0; i < connections; i++)							// Assigning friendships with 1.
+	{
+		matrix[data[i][1]][data[i][0]] = 1;
+	}
+	
+	for(i = 0; i < accounts; i++)							// Finding the friend ID and storing the IDs with 1s into a Array.
+	{
+		if(matrix[ID][i] == 1)
+		{
+			FriendList[ctr] = i;
+			ctr++;
+		}
+	}
+		
+	return ctr;									// Ctr is the number of friends.
 }
 
 /*
-	Function for printing the friends from an inputted ID number.
+	Function for printing the friends from an inputed ID number.
 */
 void displayFriends(int data[][2], int accounts, int connections)
 {
@@ -82,9 +82,9 @@ void displayFriends(int data[][2], int accounts, int connections)
 	int num_friends;
 	int new_line = 1;
 	static int FriendList[1750000];
-
-    // This loop asks the input for a ID number, if invalid then loop, else continue.
-	do 																		
+	
+	
+	do 											// This loop asks the input for a ID number, if invalid then loop, else continue.
 	{
 		printf("Input ID number [from 0 to %d]: ", accounts-1);
 		scanf("%d", &ID);
@@ -99,23 +99,20 @@ void displayFriends(int data[][2], int accounts, int connections)
 		}
 	}while(valid == 1);
 	
-	// Calling the function to find friends of input.
-	findFriends(data, connections, ID, &num_friends, FriendList);
-
-	// Prints the array of friends.
-	printf("\nPerson %d has %d friends!\n", ID, num_friends); 				
-	printf("List of friends:\n\n");
+	num_friends = dataMatrix(data, accounts, connections, ID, FriendList);
+	
+	printf("\nPerson %d has %d friends!\n", ID, num_friends); 				// Prints the array of friends.
+	printf("List of friends:\n");
 	for(i = 0; i < num_friends; i++)
 	{
 		printf("%5d ", FriendList[i]);
-		if(new_line == 10) 													// If statement to print a new line so that only 10 friends will be displayed per line.
+		if(new_line == 10) 								// If statement to print a new line so that only 10 friends will be displayed per line.
 		{
 			printf("\n");
 			new_line = 0;
 		}
 		new_line++;
 	}
-    printf("\n");
 }
 
 // Function to create a new node
